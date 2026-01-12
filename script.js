@@ -1399,6 +1399,61 @@ function initLinksSection() {
             }
         }
     }
+    
+    // Убеждаемся, что все кнопки в секции ссылок кликабельны
+    function makeButtonsClickable() {
+        const linksSection = document.getElementById('links-section');
+        if (!linksSection) return;
+        
+        const linkButtons = linksSection.querySelectorAll('.link-button');
+        linkButtons.forEach(button => {
+            // Принудительно устанавливаем все необходимые свойства
+            button.style.pointerEvents = 'auto';
+            button.style.zIndex = '100000';
+            button.style.position = 'relative';
+            button.style.cursor = 'pointer';
+            
+            // Убеждаемся, что дочерние элементы не блокируют клики
+            const children = button.querySelectorAll('*');
+            children.forEach(child => {
+                child.style.pointerEvents = 'none';
+            });
+            
+            // Добавляем обработчик mousedown для принудительной обработки кликов
+            button.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                if (button.href && button.href !== '#') {
+                    window.open(button.href, button.target || '_self');
+                }
+            }, true);
+            
+            // Также добавляем обработчик click
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (button.href && button.href !== '#') {
+                    if (button.target === '_blank') {
+                        window.open(button.href, '_blank');
+                    } else {
+                        window.location.href = button.href;
+                    }
+                }
+            }, true);
+        });
+    }
+    
+    // Вызываем функцию сразу и после загрузки DOM
+    makeButtonsClickable();
+    
+    // Также вызываем при показе секции
+    if (linksSection) {
+        const observer = new MutationObserver(() => {
+            if (linksSection.style.display !== 'none') {
+                setTimeout(makeButtonsClickable, 100);
+            }
+        });
+        observer.observe(linksSection, { attributes: true, attributeFilter: ['style'] });
+    }
 }
 
 if (document.readyState === 'loading') {
@@ -1411,6 +1466,24 @@ if (document.readyState === 'loading') {
     console.log('✅ Document already loaded, initializing immediately');
     initAll();
 }
+
+// ===== GLOBAL CLICK HANDLER FOR BUTTONS =====
+// Обработчик на уровне document для перехвата всех кликов на кнопках
+document.addEventListener('click', (e) => {
+    // Проверяем, кликнули ли на кнопку или её дочерний элемент
+    const linkButton = e.target.closest('.link-button');
+    if (linkButton && linkButton.href && linkButton.href !== '#' && linkButton.href !== 'javascript:void(0)') {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Global handler: Opening link:', linkButton.href);
+        if (linkButton.target === '_blank') {
+            window.open(linkButton.href, '_blank');
+        } else {
+            window.location.href = linkButton.href;
+        }
+        return false;
+    }
+}, true); // Используем capture phase для перехвата всех кликов
 
 // ===== RANDOM CHARACTERS FOR DECODING =====
 const randomChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';

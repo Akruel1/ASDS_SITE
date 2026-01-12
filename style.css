@@ -24,6 +24,11 @@ body {
     min-height: 100vh;
     position: relative;
     perspective: 1000px;
+    pointer-events: auto;
+}
+
+body > * {
+    pointer-events: auto;
 }
 
 body.loading {
@@ -504,6 +509,11 @@ body.loading {
     display: flex;
     flex-direction: column;
     transform-style: preserve-3d;
+    pointer-events: auto !important;
+}
+
+.container > * {
+    pointer-events: auto;
 }
 
 /* ===== HEADER & NEON TITLE ===== */
@@ -2650,6 +2660,11 @@ body.subject-content-open .container {
     opacity: 0;
     transform: translateY(50px);
     animation: linksSectionAppear 0.8s ease-out forwards;
+    position: relative !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+    isolation: isolate;
+    transform: translateY(50px) translateZ(0);
 }
 
 @keyframes linksSectionAppear {
@@ -2664,7 +2679,12 @@ body.subject-content-open .container {
     border: 1px solid rgba(0, 243, 255, 0.2);
     border-radius: 20px;
     padding: 40px;
+    position: relative !important;
+    z-index: 9998 !important;
+    pointer-events: auto !important;
     backdrop-filter: blur(20px);
+    isolation: isolate;
+    transform: translateZ(0);
 }
 
 .links-title {
@@ -2687,6 +2707,9 @@ body.subject-content-open .container {
 
 .links-category {
     margin-bottom: 40px;
+    position: relative;
+    z-index: 1002;
+    pointer-events: auto;
 }
 
 .category-title {
@@ -2706,9 +2729,14 @@ body.subject-content-open .container {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
     margin-bottom: 20px;
+    position: relative !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+    transform: translateZ(0);
 }
 
 .link-button {
+    position: relative !important;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2724,11 +2752,16 @@ body.subject-content-open .container {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    z-index: 10000 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    user-select: none;
+    -webkit-user-select: none;
+    isolation: isolate;
+    transform: translateZ(0);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     backdrop-filter: blur(10px);
-    position: relative;
     overflow: hidden;
-    cursor: pointer;
 }
 
 .link-button::before {
@@ -2776,6 +2809,11 @@ body.subject-content-open .container {
 .link-icon {
     font-size: 2.5rem;
     filter: drop-shadow(0 0 10px currentColor);
+    pointer-events: none;
+}
+
+.link-button * {
+    pointer-events: none;
 }
 
 .link-text {
